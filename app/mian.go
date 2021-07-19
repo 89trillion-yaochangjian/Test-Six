@@ -3,5 +3,6 @@ package main
 import "ChatClient/internal/view"
 
 func main() {
-	view.View()
+	//初始化界面
+	view.InitView()
 }

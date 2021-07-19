@@ -3,69 +3,53 @@ package ctrl
 import (
 	"ChatClient/internal/log"
 	"ChatClient/internal/model"
+	"ChatClient/internal/service"
 	"ChatClient/internal/wsClient"
-	"fyne.io/fyne/v2/widget"
 )
-
-var UserListLabel *widget.Label
-
-var ChatLabel *widget.Label
-
-var ConnStatus *widget.Label
-
-var InputText *widget.Entry
-
 
 //发起连接,开始聊天
 
-func ChatStart(userName string,addr string) {
-		if userName == ""||addr == ""{
-			ChatLabel.Text = model.CheckPra
-			return
-		}
-		if wsClient.Conn !=nil{
-			ChatLabel.Text = model.RepeatCon
-			return
-		}
-		err := wsClient.ChatCon(userName,addr)
-		if err!=nil {
-			log.Error.Println(err)
-			return
-		}
-		ConnStatus.Text = model.OK
-		ChatLabel.Text = ""
-		ChatSend(userName,model.SignIn)
-		go ChatReceive()
-
-}
-//发送消息
-
-func ChatSend(username string,context string) {
-	if wsClient.Conn == nil {
-		ChatLabel.Text = model.FisCon
+func ChatStart(userName string, addr string) {
+	if userName == "" || addr == "" {
+		model.ChatLabel.Text = model.CheckPra
 		return
 	}
-	if wsClient.Conn !=nil{
-		if context==model.ExitType {
-			message := &model.ChatRequest{
-				UserName: username,
-				Type: context,
-				Content: context,
-			}
-			wsClient.WriteMessage(message)
+	if wsClient.Conn != nil {
+		model.ChatLabel.Text = model.RepeatCon
+		return
+	}
+	err := wsClient.ChatCon(userName, addr)
+	if err != nil {
+		log.Error.Println(err)
+		return
+	}
+	model.ConnStatus.Text = model.OK
+	model.ChatLabel.Text = ""
+	ChatSend(userName, model.SignIn)
+	go ChatReceive()
+
+}
+
+//发送消息
+
+func ChatSend(username string, context string) {
+	if wsClient.Conn == nil {
+		model.ChatLabel.Text = model.FisCon
+		return
+	}
+	if wsClient.Conn != nil {
+		if context == model.ExitType {
+			service.ChatExit(username, context)
+		} else if context == model.UserListType {
+			service.ChatUserList(username)
 		} else {
-			log.Info.Print(model.TalkLog,"user:"+username)
-			message := &model.ChatRequest{
-				UserName: username,
-				Type: model.TalkType,
-				Content: context,
-		}
-		wsClient.WriteMessage(message)
+			service.ChatTalk(username, context)
 		}
 	}
-	InputText.Text = ""
-	InputText.Refresh()
+	model.InputText.Text = ""
+	model.InputText.Refresh()
 }
+
 //接受消息
 
 func ChatReceive() {
@@ -80,31 +64,13 @@ func ChatReceive() {
 			for _, value := range msg.UserList {
 				userList += value + "\n"
 			}
-			UserListLabel.Text = userList
-			UserListLabel.Refresh()
+			model.UserListLabel.Text = userList
+			model.UserListLabel.Refresh()
 		}
 		//读取聊天内容
-		if msg.Content != ""&& msg.UserName !=""{
-			ChatLabel.Text += msg.UserName+":"+msg.Content+"\n"
-			ChatLabel.Refresh()
+		if msg.Content != "" && msg.UserName != "" {
+			model.ChatLabel.Text += msg.UserName + ":" + msg.Content + "\n"
+			model.ChatLabel.Refresh()
 		}
-	}
-}
-
-//退出连接
-
-func ChatExit() {
-	if wsClient.Conn == nil {
-		ChatLabel.Text = model.FisCon
-		return
-	}
-	if wsClient.Conn != nil{
-		err := wsClient.Exit()
-		if err != nil {
-			log.Error.Println(err)
-		}
-		wsClient.Conn = nil
-		ConnStatus.Text = model.Fail
-		ChatLabel.Text = ""
 	}
 }
