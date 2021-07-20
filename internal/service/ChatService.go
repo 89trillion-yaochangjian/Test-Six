@@ -1,7 +1,7 @@
 package service
 
 import (
-	"ChatClient/internal/log"
+	"ChatClient/internal/config"
 	"ChatClient/internal/model"
 	"ChatClient/internal/wsClient"
 )
@@ -9,20 +9,20 @@ import (
 //exit处理
 
 func ChatExit(username string, context string) {
-	message := &model.ChatRequest{
-		UserName: username,
-		Type:     context,
-		Content:  context,
-	}
-	wsClient.WriteMessage(message)
-	if wsClient.Conn == nil {
-		model.ChatLabel.Text = model.FisCon
-		return
-	}
 	if wsClient.Conn != nil {
+		message := &model.ChatRequest{
+			UserName: username,
+			Type:     context,
+			Content:  context,
+		}
+		wsClient.WriteMessage(message)
+		if wsClient.Conn == nil {
+			model.ChatLabel.Text = model.FisCon
+			return
+		}
 		err := wsClient.Exit()
 		if err != nil {
-			log.Error.Println(err)
+			config.Error.Println(err)
 		}
 		wsClient.Conn = nil
 		model.ConnStatus.Text = model.Fail
@@ -47,7 +47,7 @@ func ChatUserList(username string) {
 //talk 处理
 
 func ChatTalk(username string, context string) {
-	log.Info.Print(model.TalkLog, "user:"+username)
+	config.Info.Print(model.TalkLog, "user:"+username)
 	message := &model.ChatRequest{
 		UserName: username,
 		Type:     model.TalkType,

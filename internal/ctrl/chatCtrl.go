@@ -1,7 +1,7 @@
 package ctrl
 
 import (
-	"ChatClient/internal/log"
+	"ChatClient/internal/config"
 	"ChatClient/internal/model"
 	"ChatClient/internal/service"
 	"ChatClient/internal/wsClient"
@@ -20,14 +20,14 @@ func ChatStart(userName string, addr string) {
 	}
 	err := wsClient.ChatCon(userName, addr)
 	if err != nil {
-		log.Error.Println(err)
+		config.Error.Println(err)
 		return
 	}
 	model.ConnStatus.Text = model.OK
 	model.ChatLabel.Text = ""
 	ChatSend(userName, model.SignIn)
 	go ChatReceive()
-
+	//wsClient.Sender(wsClient.Conn)
 }
 
 //发送消息
@@ -56,6 +56,13 @@ func ChatReceive() {
 	for {
 		msg, err := wsClient.ReadMessage()
 		if err != nil {
+			model.ConnStatus.Text = "fail"
+			model.UserListLabel.Text = ""
+			model.ChatLabel.Text = ""
+			model.ConnStatus.Refresh()
+			model.UserListLabel.Refresh()
+			model.ChatLabel.Refresh()
+			wsClient.Conn = nil
 			break
 		}
 		//读取用户列表

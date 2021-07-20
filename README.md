@@ -55,32 +55,47 @@ message ChatRequest {
 }
 ```
 
+#### 5. 程序截图
+ 主界面
+![img.png](img/img.png)
+ 连接
+![img_1.png](img/img_1.png)
+发送消息
+![img_2.png](img/img_2.png)
 
-
-#### 5. 第三方库
+ 退出连接
+![img.png](img.png)
+#### 6. 第三方库
 
 1. websocket框架
+ ```
    代码 https://github.com/gorilla/websocket
    文档 https://pkg.go.dev/github.com/gorilla/websocket
+```
 
 2. 用于 数据传输
+```
    代码 https://github.com/protocolbuffers/protobuf
    文档 https://developers.google.com/protocol-buffers/docs/gotutorial
+```
 
 3. 用于 客户端界面构建
+```
    代码 https://github.com/fyne-io/fyne
    文档 https://developer.fyne.io/
+```
 
-#### 6. 如何编译执行
+#### 7. 如何编译执行
 
 go run main.go
 
-#### 7.todo
+#### 8.todo
 
 页面过于简单，数据与页面交互部分优化
 
 
-
+#### 10.流程图
+![fdews](客户端流程图.png "流程图")
 
 
 

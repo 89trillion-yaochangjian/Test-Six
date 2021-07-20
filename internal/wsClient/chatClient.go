@@ -1,7 +1,7 @@
 package wsClient
 
 import (
-	"ChatClient/internal/log"
+	"ChatClient/internal/config"
 	"ChatClient/internal/model"
 	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/websocket"
@@ -22,7 +22,7 @@ func ChatCon(userName string, addr string) error {
 	//通过Dialer连接websocket服务器
 	conn, _, err := dialer.Dial(u.String(), header)
 	if err != nil {
-		log.Error.Println(err)
+		config.Error.Println(err)
 		return err
 	}
 	Conn = conn
@@ -34,7 +34,7 @@ func ChatCon(userName string, addr string) error {
 func WriteMessage(msg *model.ChatRequest) error {
 	msgMarshal, err := proto.Marshal(msg)
 	if err != nil {
-		log.Error.Println(err)
+		config.Error.Println(err)
 		return err
 	}
 	err1 := Conn.WriteMessage(websocket.TextMessage, msgMarshal)
@@ -61,12 +61,12 @@ func ReadMessage() (*model.ChatRequest, error) {
 func Exit() error {
 	err := Conn.WriteMessage(websocket.CloseMessage, nil)
 	if err != nil {
-		log.Error.Println(err)
+		config.Error.Println(err)
 		return err
 	}
 	err = Conn.Close()
 	if err != nil {
-		log.Error.Println(err)
+		config.Error.Println(err)
 		return err
 	}
 	return err
