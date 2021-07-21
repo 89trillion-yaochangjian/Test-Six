@@ -12,39 +12,29 @@ import (
 func InitView() {
 	myApp := app.New()
 	w := myApp.NewWindow("Chat")
-	UserNameText := widget.NewEntry()
-	AddrText := widget.NewEntry()
+	model.UserNameText = widget.NewEntry()
+	model.AddrText = widget.NewEntry()
 	//连接状态OK：连接 fail：为连接
 	model.ConnStatus = widget.NewLabel("fail")
 	model.InputText = widget.NewEntry()
 	ConButton := widget.NewButton("ConnectionBtn", func() {
-		username := UserNameText.Text
-		addr := AddrText.Text
-		if username == "" || addr == "" {
-
-		}
-		ctrl.ChatStart(username, addr)
-
+		ctrl.ChatStart()
 	})
 	ExitButton := widget.NewButton("ExitBtn", func() {
-		username := UserNameText.Text
-		context := "exit"
-		service.ChatExit(username, context)
+		service.ChatExit()
 	})
 	//用户列表
 	model.UserListLabel = widget.NewLabel("")
 	//聊天内容
 	model.ChatLabel = widget.NewLabel("")
 	SendButton := widget.NewButton("SendBtn", func() {
-		username := UserNameText.Text
-		context := model.InputText.Text
-		ctrl.ChatSend(username, context)
+		ctrl.ChatSend()
 	})
 	newForm := widget.NewForm(
 		//用户名
-		widget.NewFormItem("UserName:", UserNameText),
+		widget.NewFormItem("UserName:", model.UserNameText),
 		//地址
-		widget.NewFormItem("Address:", AddrText),
+		widget.NewFormItem("Address:", model.AddrText),
 		//连接按钮
 		widget.NewFormItem("Connection:", ConButton),
 		//连接状态

@@ -3,28 +3,34 @@ package service
 import (
 	"ChatClient/internal/config"
 	"ChatClient/internal/model"
-	"ChatClient/internal/wsClient"
+	"ChatClient/internal/ws"
 )
 
 //exit处理
 
-func ChatExit(username string, context string) {
-	if wsClient.Conn != nil {
+func ChatExit() {
+	if ws.Conn == nil {
+		model.ChatLabel.Text = model.FisCon
+		return
+	}
+	username := model.UserNameText.Text
+	context := "exit"
+	if ws.Conn != nil {
 		message := &model.ChatRequest{
 			UserName: username,
 			Type:     context,
 			Content:  context,
 		}
-		wsClient.WriteMessage(message)
-		if wsClient.Conn == nil {
+		ws.WriteMessage(message)
+		if ws.Conn == nil {
 			model.ChatLabel.Text = model.FisCon
 			return
 		}
-		err := wsClient.Exit()
+		err := ws.Exit()
 		if err != nil {
 			config.Error.Println(err)
 		}
-		wsClient.Conn = nil
+		ws.Conn = nil
 		model.ConnStatus.Text = model.Fail
 		model.ChatLabel.Text = ""
 	}
@@ -41,7 +47,7 @@ func ChatUserList(username string) {
 		UserName: username,
 		Type:     model.UserListType,
 	}
-	wsClient.WriteMessage(message)
+	ws.WriteMessage(message)
 }
 
 //talk 处理
@@ -53,5 +59,5 @@ func ChatTalk(username string, context string) {
 		Type:     model.TalkType,
 		Content:  context,
 	}
-	wsClient.WriteMessage(message)
+	ws.WriteMessage(message)
 }

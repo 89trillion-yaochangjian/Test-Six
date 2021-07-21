@@ -13,3 +13,9 @@ var ConnStatus *widget.Label
 
 //输入框
 var InputText *widget.Entry
+
+//输入框
+var UserNameText *widget.Entry
+
+//输入框
+var AddrText *widget.Entry

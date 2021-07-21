@@ -1,4 +1,4 @@
-package wsClient
+package ws
 
 import (
 	"ChatClient/internal/config"

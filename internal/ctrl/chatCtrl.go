@@ -4,42 +4,48 @@ import (
 	"ChatClient/internal/config"
 	"ChatClient/internal/model"
 	"ChatClient/internal/service"
-	"ChatClient/internal/wsClient"
+	"ChatClient/internal/status"
+	"ChatClient/internal/ws"
 )
 
 //发起连接,开始聊天
 
-func ChatStart(userName string, addr string) {
+func ChatStart() {
+	userName := model.UserNameText.Text
+	addr := model.AddrText.Text
 	if userName == "" || addr == "" {
-		model.ChatLabel.Text = model.CheckPra
+		model.ChatLabel.Text = status.CheckPra.Msg
 		return
 	}
-	if wsClient.Conn != nil {
-		model.ChatLabel.Text = model.RepeatCon
+	if ws.Conn != nil {
+		model.ChatLabel.Text = status.RepeatCon.Msg
 		return
 	}
-	err := wsClient.ChatCon(userName, addr)
+	err := ws.ChatCon(userName, addr)
 	if err != nil {
 		config.Error.Println(err)
 		return
 	}
 	model.ConnStatus.Text = model.OK
 	model.ChatLabel.Text = ""
-	ChatSend(userName, model.SignIn)
+	model.InputText.Text = status.SignIn.Msg
+	ChatSend()
 	go ChatReceive()
-	//wsClient.Sender(wsClient.Conn)
 }
 
 //发送消息
 
-func ChatSend(username string, context string) {
-	if wsClient.Conn == nil {
-		model.ChatLabel.Text = model.FisCon
+func ChatSend() {
+	username := model.UserNameText.Text
+	context := model.InputText.Text
+	model.InputText.Refresh()
+	if ws.Conn == nil {
+		model.ChatLabel.Text = status.FisCon.Msg
 		return
 	}
-	if wsClient.Conn != nil {
+	if ws.Conn != nil {
 		if context == model.ExitType {
-			service.ChatExit(username, context)
+			service.ChatExit()
 		} else if context == model.UserListType {
 			service.ChatUserList(username)
 		} else {
@@ -54,7 +60,7 @@ func ChatSend(username string, context string) {
 
 func ChatReceive() {
 	for {
-		msg, err := wsClient.ReadMessage()
+		msg, err := ws.ReadMessage()
 		if err != nil {
 			model.ConnStatus.Text = "fail"
 			model.UserListLabel.Text = ""
@@ -62,7 +68,7 @@ func ChatReceive() {
 			model.ConnStatus.Refresh()
 			model.UserListLabel.Refresh()
 			model.ChatLabel.Refresh()
-			wsClient.Conn = nil
+			ws.Conn = nil
 			break
 		}
 		//读取用户列表

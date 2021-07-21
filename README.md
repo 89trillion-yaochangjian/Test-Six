@@ -8,27 +8,37 @@
 ```
 .
 ├── README.md
-├── __pycache__
-│   └── locustfile.cpython-39.pyc
 ├── app
 │   └── mian.go
 ├── go.mod
 ├── go.sum
+├── img
+│   ├── img.png
+│   ├── img3.png
+│   ├── img_1.png
+│   └── img_2.png
 ├── internal
+│   ├── config
+│   │   └── logConfig.go
 │   ├── ctrl
 │   │   └── chatCtrl.go
 │   ├── log
-│   │   ├── logConfig.go
 │   │   └── sys.log
 │   ├── model
 │   │   ├── ChatProto.pb.go
 │   │   ├── ChatProto.proto
+│   │   ├── PageElements.go
 │   │   └── constantInfo.go
+│   ├── service
+│   │   └── ChatService.go
+│   ├── status
+│   │   └── chatRes.go
 │   ├── view
 │   │   └── chatView.go
-│   └── wsClient
+│   └── ws
 │       └── chatClient.go
 └── 客户端流程图.png
+
 
 
 ```
@@ -36,13 +46,17 @@
 #### 3. 代码逻辑分层
 
 
+
 |层|文件夹|主要职责|调用关系|其他说明|
 | ------------ | ------------ | ------------ | ------------ | ------------ |
 |应用层 |app/main.go  |服务器启动 |调用view层   |不可同层调用
-|ctrl层  |internal/ctrl | 处理来具体业务逻辑| 调用websocket层，被view调用  |不可同层调用
-|websocket层 |internal/wsClient|提供基础的websocket功能 | 调用model，被ctrl层调用    |不可同层调用
-| model |internal/model  |定义数据类型 | 被websocket层   |不可同层调用
-| 配置文件 |internal/config  |日志配置 | 被websocket层 service层调用   |不可同层调用
+|ctrl层  |internal/ctrl | 处理来具体业务逻辑| 调用service层，被view调用  |可同层调用
+|service层  |internal/service | 处理来自对等方的 ctrl 请求 | 调用ws层 ，被ctrl层调用  |不可同层调用
+|ws层 |internal/ws|提供基础的websocket功能 | 调用model，router。被service层调用  |不可同层调用
+|view层 |internal/view|客户端页面 | 调用ctrl，model层。被应用层调用  |不可同层调用
+| status |internal/status  |定义错误码和错误信息 | 被ctr层调用   |不可同层调用
+| model |internal/model  |定义数据类型 | 被ws层   |不可同层调用
+| 配置文件 |internal/config  |日志配置 | 被ws层 service层调用   |不可同层调用
 
 #### 4.存储设计
 
