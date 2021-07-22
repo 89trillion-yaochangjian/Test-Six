@@ -3,6 +3,7 @@ package service
 import (
 	"ChatClient/internal/config"
 	"ChatClient/internal/model"
+	"ChatClient/internal/status"
 	"ChatClient/internal/ws"
 )
 
@@ -10,7 +11,7 @@ import (
 
 func ChatExit() {
 	if ws.Conn == nil {
-		model.ChatLabel.Text = model.FisCon
+		model.ChatLabel.Text = status.CheckPra.Msg
 		return
 	}
 	username := model.UserNameText.Text
@@ -23,7 +24,7 @@ func ChatExit() {
 		}
 		ws.WriteMessage(message)
 		if ws.Conn == nil {
-			model.ChatLabel.Text = model.FisCon
+			model.ChatLabel.Text = status.FisCon.Msg
 			return
 		}
 		err := ws.Exit()
