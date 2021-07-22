@@ -70,15 +70,21 @@ message ChatRequest {
 ```
 
 #### 5. 程序截图
- 主界面
+主界面:
+
 ![img.png](img/img.png)
- 连接
+
+连接:
+
 ![img_1.png](img/img_1.png)
-发送消息
+
+发送消息:
+
 ![img_2.png](img/img_2.png)
 
- 退出连接
-![img.png](img.png)
+退出连接:
+
+![img3.png](img/img3.png)
 #### 6. 第三方库
 
 1. websocket框架
